@@ -7,75 +7,104 @@ let tasks = [];
 const taskInput = document.getElementById("taskInput");
 const addTaskBtn = document.getElementById("addTaskBtn");
 const taskList = document.getElementById("taskList");
+
 const notesInput = document.getElementById("notesInput");
+
 const greeting = document.getElementById("greeting");
 const clock = document.getElementById("clock");
 const dateElement = document.getElementById("date");
+
 const timer = document.getElementById("timer");
 const startBtn = document.getElementById("startBtn");
 const pauseBtn = document.getElementById("pauseBtn");
 const resetBtn = document.getElementById("resetBtn");
+
 const themeBtn = document.getElementById("themeBtn");
+
 const cityInput = document.getElementById("cityInput");
 const weatherBtn = document.getElementById("weatherBtn");
 const weatherResult = document.getElementById("weatherResult");
 
+const allBtn = document.getElementById("allBtn");
+const completedBtn = document.getElementById("completedBtn");
+const pendingBtn = document.getElementById("pendingBtn");
+
+const totalTasks = document.getElementById("totalTasks");
+const completedTasks = document.getElementById("completedTasks");
+const pendingTasks = document.getElementById("pendingTasks");
+
+const clearAllBtn =document.getElementById("clearAllBtn");
+
+// TIMER VARIABLES
 let timeLeft = 1500;
 let timerInterval;
+
+// DRAG VARIABLE
 let draggedTask = null;
 
 // CREATE TASK FUNCTION
 function createTask(taskObj){
 
   const li = document.createElement("li");
-  li.setAttribute("draggable", true); // MAKE TASKS DRAGGABLE
+
+  // DRAGGABLE
+  li.setAttribute("draggable", true);
+
+  // DRAG START
   li.addEventListener("dragstart", function(){
 
-  draggedTask = li;
+    draggedTask = li;
 
-  li.style.opacity = "0.5";
+    li.style.opacity = "0.5";
 
-});
-li.addEventListener("dragend", function(){
+  });
 
-  li.style.opacity = "1";
+  // DRAG END
+  li.addEventListener("dragend", function(){
 
-});
-li.addEventListener("dragover", function(event){
+    li.style.opacity = "1";
 
-  event.preventDefault();
+  });
 
-});
-li.addEventListener("drop", function(){
+  // ALLOW DROP
+  li.addEventListener("dragover", function(event){
 
-  if(draggedTask !== li){
+    event.preventDefault();
 
-    const allTasks = [...taskList.children];
+  });
 
-    const draggedIndex = allTasks.indexOf(draggedTask);
+  // DROP LOGIC
+  li.addEventListener("drop", function(){
 
-    const targetIndex = allTasks.indexOf(li);
+    if(draggedTask !== li){
 
-    if(draggedIndex < targetIndex){
+      const allTasks = [...taskList.children];
 
-      taskList.insertBefore(draggedTask, li.nextSibling);
+      const draggedIndex = allTasks.indexOf(draggedTask);
+
+      const targetIndex = allTasks.indexOf(li);
+
+      if(draggedIndex < targetIndex){
+
+        taskList.insertBefore(draggedTask, li.nextSibling);
+
+      }
+      else{
+
+        taskList.insertBefore(draggedTask, li);
+
+      }
 
     }
-    else{
 
-      taskList.insertBefore(draggedTask, li);
+  });
 
-    }
-
-  }
-
-});
-
-
-
+  // CHECKBOX
   const checkBox = document.createElement("div");
 
-checkBox.classList.add("checkbox");
+  checkBox.classList.add("checkbox");
+
+  // TASK TEXT
   const span = document.createElement("span");
 
   span.innerText = taskObj.text;
@@ -83,30 +112,40 @@ checkBox.classList.add("checkbox");
   // RESTORE COMPLETED STATE
   if(taskObj.completed){
 
-  checkBox.innerText = "✓";
-
-  span.classList.add("completed");
-
-}
-  // TOGGLE COMPLETED
- checkBox.addEventListener("click", function(){
-
-  taskObj.completed = !taskObj.completed;
-
-  span.classList.toggle("completed");
-
-  if(taskObj.completed){
     checkBox.innerText = "✓";
-  }
-  else{
-    checkBox.innerText = "";
+
+    span.classList.add("completed");
+
   }
 
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+  // TOGGLE COMPLETED
+  checkBox.addEventListener("click", function(){
 
-});
+    taskObj.completed = !taskObj.completed;
+
+    span.classList.toggle("completed");
+
+    if(taskObj.completed){
+
+      checkBox.innerText = "✓";
+
+    }
+    else{
+
+      checkBox.innerText = "";
+
+    }
+
+    // SAVE
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+
+    // RE-RENDER
+    renderTasks(tasks);
+
+  });
 
   li.appendChild(checkBox);
+
   li.appendChild(span);
 
   // DELETE BUTTON
@@ -118,24 +157,67 @@ checkBox.classList.add("checkbox");
 
     event.stopPropagation();
 
-    // REMOVE FROM UI
-    li.remove();
-
     // REMOVE FROM ARRAY
     tasks = tasks.filter(function(task){
+
       return task !== taskObj;
+
     });
 
-    // UPDATE LOCAL STORAGE
+    // SAVE
     localStorage.setItem("tasks", JSON.stringify(tasks));
+
+    // RE-RENDER
+    renderTasks(tasks);
 
   });
 
   li.appendChild(deleteBtn);
 
+  // ADD TASK TO UI
   taskList.appendChild(li);
 
 }
+
+// RENDER TASKS
+function renderTasks(filteredTasks){
+
+  taskList.innerHTML = "";
+
+  filteredTasks.forEach(function(task){
+
+    createTask(task);
+
+  });
+
+  updateTaskStats();
+
+}
+
+//task count update
+function updateTaskStats(){
+
+  const total = tasks.length;
+
+  const completed = tasks.filter(function(task){
+
+    return task.completed;
+
+  }).length;
+
+  const pending = total - completed;
+
+  totalTasks.innerText =
+    `Total Tasks: ${total}`;
+
+  completedTasks.innerText =
+    `Completed: ${completed}`;
+
+  pendingTasks.innerText =
+    `Pending: ${pending}`;
+
+}
+
 
 // ADD TASK
 addTaskBtn.addEventListener("click", function(){
@@ -143,13 +225,18 @@ addTaskBtn.addEventListener("click", function(){
   const taskText = taskInput.value.trim();
 
   if(taskText === ""){
+
     alert("Please enter a task");
+
     return;
+
   }
 
   const taskObj = {
+
     text: taskText,
     completed: false
+
   };
 
   // ADD TO ARRAY
@@ -158,8 +245,8 @@ addTaskBtn.addEventListener("click", function(){
   // SAVE
   localStorage.setItem("tasks", JSON.stringify(tasks));
 
-  // CREATE UI
-  createTask(taskObj);
+  // RENDER
+  renderTasks(tasks);
 
   // CLEAR INPUT
   taskInput.value = "";
@@ -186,17 +273,17 @@ if(storedTasks){
 
   tasks = storedTasks;
 
-  tasks.forEach(function(task){
-    createTask(task);
-  });
+  renderTasks(tasks);
 
 }
 
-//save notes to local storage
+// SAVE NOTES
 const savedNotes = localStorage.getItem("notes");
 
 if(savedNotes){
+
   notesInput.value = savedNotes;
+
 }
 
 // AUTO SAVE NOTES
@@ -206,25 +293,34 @@ notesInput.addEventListener("input", function(){
 
 });
 
-// GREETING FUNCTION
+// CLOCK + GREETING
 function updateClock(){
 
   const now = new Date();
 
   const hours = now.getHours();
 
-  const minutes = now.getMinutes().toString().padStart(2, "0");
+  const minutes = now
+    .getMinutes()
+    .toString()
+    .padStart(2, "0");
 
   let greetingText = "";
 
   if(hours < 12){
+
     greetingText = "Good Morning ☀️";
+
   }
   else if(hours < 18){
+
     greetingText = "Good Afternoon 🌤️";
+
   }
   else{
+
     greetingText = "Good Evening 🌙";
+
   }
 
   let formattedHours = hours % 12 || 12;
@@ -232,23 +328,27 @@ function updateClock(){
   const ampm = hours >= 12 ? "PM" : "AM";
 
   const today = now.toLocaleDateString("en-US", {
-  weekday: "long",
-  month: "long",
-  day: "numeric"
-});
 
-  clock.innerText = `${formattedHours}:${minutes} ${ampm}`;
+    weekday: "long",
+    month: "long",
+    day: "numeric"
+
+  });
+
+  clock.innerText =
+    `${formattedHours}:${minutes} ${ampm}`;
 
   greeting.innerText = greetingText;
 
   dateElement.innerText = today;
 
 }
+
 updateClock();
 
 setInterval(updateClock, 1000);
 
-//pomodoro timer functions
+// TIMER DISPLAY
 function updateTimerDisplay(){
 
   const minutes = Math.floor(timeLeft / 60);
@@ -260,6 +360,7 @@ function updateTimerDisplay(){
 
 }
 
+// START TIMER
 startBtn.addEventListener("click", function(){
 
   clearInterval(timerInterval);
@@ -278,12 +379,14 @@ startBtn.addEventListener("click", function(){
 
 });
 
+// PAUSE TIMER
 pauseBtn.addEventListener("click", function(){
 
   clearInterval(timerInterval);
 
 });
 
+// RESET TIMER
 resetBtn.addEventListener("click", function(){
 
   clearInterval(timerInterval);
@@ -317,7 +420,8 @@ themeBtn.addEventListener("click", function(){
   }
 
 });
-//restore saved theme
+
+// RESTORE THEME
 const savedTheme = localStorage.getItem("theme");
 
 if(savedTheme === "light"){
@@ -333,17 +437,21 @@ else{
 
 }
 
-// WEATHER FUNCTIONALITY
+// WEATHER FUNCTION
 async function getWeather(){
 
   const city = cityInput.value.trim();
 
   if(city === ""){
+
     alert("Please enter a city");
+
     return;
+
   }
 
   const apiKey = "YOUR_API_KEY";  // Add your OpenWeather API key here
+  const apiKey = "YOUR_API_KEY";
 
   const url =
     `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
@@ -354,47 +462,72 @@ async function getWeather(){
 
     const data = await response.json();
 
+    // INVALID CITY
+    if(data.cod == 404){
+
+      weatherResult.innerHTML =
+        `<p>City not found</p>`;
+
+      cityInput.value = "";
+
+      return;
+
+    }
+
+    // WEATHER EMOJI
     let weatherEmoji = "";
 
-const weatherMain = data.weather[0].main;
+    const weatherMain = data.weather[0].main;
 
-if(weatherMain === "Clear"){
-  weatherEmoji = "☀️";
-}
-else if(weatherMain === "Clouds"){
-  weatherEmoji = "☁️";
-}
-else if(weatherMain === "Rain"){
-  weatherEmoji = "🌧️";
-}
-else if(weatherMain === "Thunderstorm"){
-  weatherEmoji = "⛈️";
-}
-else if(weatherMain === "Snow"){
-  weatherEmoji = "❄️";
-}
-else if(weatherMain === "Mist"){
-  weatherEmoji = "🌫️";
-}
-else{
-  weatherEmoji = "🌍";
-}
+    if(weatherMain === "Clear"){
 
-if(data.cod == 404){
+      weatherEmoji = "☀️";
 
-  weatherResult.innerHTML =
-    `<p>City not found</p>`;
-    cityInput.value = "";
+    }
+    else if(weatherMain === "Clouds"){
 
-  return;
-}
+      weatherEmoji = "☁️";
 
-weatherResult.innerHTML = `
-  <h3>${data.name}</h3>
-  <p>Temperature: ${data.main.temp}°C</p>
-  <p>Weather: ${weatherEmoji} ${data.weather[0].main}</p>
-  <p>Humidity: ${data.main.humidity}%</p>
-`;
+    }
+    else if(weatherMain === "Rain"){
+
+      weatherEmoji = "🌧️";
+
+    }
+    else if(weatherMain === "Thunderstorm"){
+
+      weatherEmoji = "⛈️";
+
+    }
+    else if(weatherMain === "Snow"){
+
+      weatherEmoji = "❄️";
+
+    }
+    else if(weatherMain === "Mist"){
+
+      weatherEmoji = "🌫️";
+
+    }
+    else{
+
+      weatherEmoji = "🌍";
+
+    }
+
+    // DISPLAY WEATHER
+    weatherResult.innerHTML = `
+      <h3>${data.name}</h3>
+
+      <p>Temperature: ${data.main.temp}°C</p>
+
+      <p>
+        Weather:
+        ${weatherEmoji} ${data.weather[0].main}
+      </p>
+
+      <p>Humidity: ${data.main.humidity}%</p>
+    `;
 
   }
   catch(error){
@@ -405,13 +538,74 @@ weatherResult.innerHTML = `
   }
 
 }
+
+// WEATHER BUTTON
 weatherBtn.addEventListener("click", getWeather);
 
+// ENTER KEY FOR WEATHER
 cityInput.addEventListener("keydown", function(event){
 
   if(event.key === "Enter"){
 
     getWeather();
+
+  }
+
+});
+
+// FILTER BUTTONS
+
+allBtn.addEventListener("click", function(){
+
+  renderTasks(tasks);
+
+});
+
+completedBtn.addEventListener("click", function(){
+
+  const completedTasks = tasks.filter(function(task){
+
+    return task.completed;
+
+  });
+
+  renderTasks(completedTasks);
+
+});
+
+pendingBtn.addEventListener("click", function(){
+
+  const pendingTasks = tasks.filter(function(task){
+
+    return !task.completed;
+
+  });
+
+  renderTasks(pendingTasks);
+
+});
+
+// CLEAR ALL TASKS
+
+clearAllBtn.addEventListener("click", function(){
+
+  const confirmClear = confirm(
+    "Are you sure you want to delete all tasks?"
+  );
+
+  if(confirmClear){
+
+    // EMPTY ARRAY
+    tasks = [];
+
+    // CLEAR LOCAL STORAGE
+    localStorage.setItem(
+      "tasks",
+      JSON.stringify(tasks)
+    );
+
+    // RE-RENDER
+    renderTasks(tasks);
 
   }
 
