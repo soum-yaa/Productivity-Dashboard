@@ -1,0 +1,411 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  font-family: Arial, sans-serif;
+
+  background-image:
+    linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+    url("https://images.unsplash.com/photo-1517842645767-c639042777db");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  min-height: 100vh;
+
+  padding: 40px;
+
+  background-attachment: fixed;
+}
+.container{
+  max-width: 850px;
+
+  margin: auto;
+
+  background: rgba(20, 20, 20, 0.55);
+
+  backdrop-filter: blur(12px);
+
+  padding: 30px;
+
+  border-radius: 20px;
+
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+h1{
+  text-align: center;
+
+  margin-bottom: 30px;
+
+  color: white;
+
+  font-size: 42px;
+
+  font-weight: bold;
+}
+
+h2{
+  color: white;
+
+  margin-bottom: 15px;
+
+  font-size: 28px;
+}
+
+section{
+  background: rgba(255,255,255,0.06);
+
+  padding: 20px;
+
+  margin-bottom: 25px;
+
+  border-radius: 16px;
+}
+
+.todo-input{
+  display: flex;
+
+  gap: 12px;
+
+  margin-top: 15px;
+}
+
+input{
+  flex: 1;
+
+  padding: 14px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  outline: none;
+
+  font-size: 16px;
+
+  background: rgba(255,255,255,0.92);
+
+  color: black;
+}
+
+button{
+  padding: 12px 20px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #6c63ff;
+
+  color: white;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+
+  font-size: 15px;
+
+  font-weight: bold;
+}
+
+button:hover{
+  transform: scale(1.05);
+
+  opacity: 0.9;
+}
+
+li{
+  background: rgba(255,255,255,0.08);
+
+  padding: 14px;
+
+  margin-top: 12px;
+
+  border-radius: 12px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  transition: 0.3s;
+
+  cursor: grab;
+}
+
+li:hover{
+  transform: translateY(-2px);
+
+  background: rgba(255,255,255,0.12);
+}
+
+li span{
+  flex: 1;
+
+  color: white;
+
+  font-size: 17px;
+
+  word-break: break-word;
+}
+
+li:active{
+  cursor: grabbing;
+}
+
+.checkbox{
+  width: 24px;
+
+  height: 24px;
+
+  border: 2px solid white;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  cursor: pointer;
+
+  color: white;
+
+  font-size: 14px;
+
+  flex-shrink: 0;
+}
+
+.completed{
+  opacity: 0.6;
+}
+
+textarea{
+  width: 100%;
+
+  height: 180px;
+
+  padding: 15px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  outline: none;
+
+  resize: none;
+
+  font-size: 16px;
+
+  background: rgba(255,255,255,0.9);
+
+  margin-top: 10px;
+}
+
+.greeting-container{
+  text-align: center;
+
+  margin-bottom: 25px;
+}
+
+#greeting{
+  color: white;
+
+  font-size: 28px;
+
+  margin-bottom: 8px;
+}
+
+#clock{
+  color: rgba(255,255,255,0.8);
+
+  font-size: 18px;
+}
+
+#date{
+  color: rgba(255,255,255,0.7);
+
+  margin-top: 5px;
+
+  font-size: 16px;
+}
+
+.timer-container{
+  text-align: center;
+}
+
+#timer{
+  font-size: 64px;
+
+  color: white;
+
+  margin: 20px 0;
+}
+
+.timer-buttons{
+  display: flex;
+
+  justify-content: center;
+
+  gap: 10px;
+}
+
+@media (max-width: 768px){
+
+  .container{
+    padding: 20px;
+  }
+
+  h1{
+    font-size: 30px;
+  }
+
+  #timer{
+    font-size: 48px;
+  }
+
+  .todo-input{
+    flex-direction: column;
+  }
+
+  .timer-buttons{
+    flex-direction: column;
+  }
+
+  button{
+    width: 100%;
+  }
+
+ li{
+  flex-direction: column;
+
+  align-items: flex-start;
+}
+
+}
+
+.theme-toggle{
+  position: static;
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  margin-bottom: 15px;
+}
+
+.light-mode{
+  background-image:
+    linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),
+    url("https://images.unsplash.com/photo-1517842645767-c639042777db");
+}
+
+.light-mode .container{
+  background: rgba(255,255,255,0.7);
+
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.light-mode h1,
+.light-mode h2,
+.light-mode span,
+.light-mode #clock,
+.light-mode #date,
+.light-mode #timer,
+.light-mode p{
+  color: black;
+}
+
+.light-mode li{
+  background: rgba(255,255,255,0.8);
+}
+
+.light-mode section{
+  background: rgba(255,255,255,0.5);
+}
+
+.light-mode #greeting{
+  color: black;
+}
+
+.light-mode .checkbox{
+  border: 2px solid black;
+
+  color: black;
+}
+
+.light-mode textarea{
+  background: white;
+
+  color: black;
+}
+
+.light-mode input{
+  background: white;
+
+  color: black;
+}
+
+.light-mode #weatherResult{
+  color: black;
+
+  background: rgba(255,255,255,0.7);
+}
+
+.weather-container{
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+}
+
+#weatherResult{
+  color: white;
+
+  font-size: 18px;
+
+  margin-top: 10px;
+
+  background: rgba(255,255,255,0.08);
+
+  padding: 15px;
+
+  border-radius: 12px;
+
+  line-height: 1.6;
+
+  animation: fadeIn 0.4s ease;
+}
+
+#weatherResult h3{
+  margin-bottom: 10px;
+
+  font-size: 24px;
+}
+
+#weatherResult p{
+  margin: 6px 0;
+}
+@keyframes fadeIn{
+
+  from{
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to{
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
