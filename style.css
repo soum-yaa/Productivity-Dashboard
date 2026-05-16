@@ -155,6 +155,12 @@ li span{
   font-size: 17px;
 
   word-break: break-word;
+
+  cursor: pointer;
+}
+
+li span:hover{
+  opacity: 0.8;
 }
 
 li:active{
@@ -371,6 +377,10 @@ textarea{
   color: white;
 }
 
+.light-mode .edit-info{
+  color: rgba(0,0,0,0.7);
+}
+
 .weather-container{
   display: flex;
 
@@ -462,4 +472,309 @@ textarea{
 
 #clearAllBtn:hover{
   opacity: 0.9;
+}
+.edit-info{
+  color: rgba(255,255,255,0.7);
+
+  font-size: 14px;
+
+  margin-bottom: 10px;
+}
+
+#toast{
+  position: fixed;
+
+  top: 20px;
+
+  right: 20px;
+
+  background: #333;
+
+  color: white;
+
+  padding: 14px 20px;
+
+  border-radius: 12px;
+
+  font-size: 15px;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transform: translateY(-20px);
+
+  transition: 0.3s;
+
+  z-index: 9999;
+}
+
+#toast.show{
+  opacity: 1;
+
+  transform: translateY(0);
+}
+
+.light-mode #toast{
+  background: black;
+
+  color: white;
+}
+
+#toast.success{
+  background: #28a745;
+}
+
+#toast.error{
+  background: #dc3545;
+}
+
+#toast.warning{
+  background: #ff9800;
+}
+
+.task-stats{
+  margin-top: 20px;
+
+  color: white;
+}
+
+.task-stats p{
+  margin: 0;
+
+  font-size: 16px;
+
+  background: rgba(255,255,255,0.08);
+
+  padding: 10px 14px;
+
+  border-radius: 12px;
+}
+
+.stats-row{
+  display: flex;
+
+  gap: 15px;
+
+  margin-bottom: 15px;
+
+  flex-wrap: wrap;
+}
+
+.progress-container{
+  width: 100%;
+
+  height: 14px;
+
+  background: rgba(255,255,255,0.2);
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  margin-top: 12px;
+}
+
+#progressBar{
+  height: 100%;
+
+  width: 0%;
+
+  background: #6c63ff;
+
+  transition: 0.4s ease;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: white;
+
+  font-size: 12px;
+
+  font-weight: bold;
+
+  border-radius: 20px;
+}
+.light-mode .task-stats{
+  color: black;
+}
+
+.light-mode .progress-container{
+  background: rgba(0,0,0,0.1);
+}
+
+/* MODAL OVERLAY */
+.modal-overlay{
+
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0,0,0,0.6);
+
+  display: none;
+
+  justify-content: center;
+
+  align-items: center;
+
+  z-index: 2000;
+
+}
+
+/* SHOW MODAL */
+.modal-overlay.show{
+
+  display: flex;
+
+}
+
+/* MODAL BOX */
+.custom-modal{
+
+  background: rgba(30,30,30,0.95);
+
+  padding: 25px;
+
+  width: 90%;
+  max-width: 400px;
+
+  border-radius: 20px;
+
+  text-align: center;
+
+  animation: modalPop 0.3s ease;
+
+}
+
+/* MODAL TITLE */
+.custom-modal h2{
+
+  color: white;
+
+  margin-bottom: 10px;
+
+}
+
+/* MODAL MESSAGE */
+.custom-modal p{
+
+  color: rgba(255,255,255,0.8);
+
+  margin-bottom: 20px;
+
+  line-height: 1.5;
+
+}
+
+/* BUTTONS */
+.modal-buttons{
+
+  display: flex;
+
+  gap: 12px;
+
+  justify-content: center;
+
+}
+
+/* ANIMATION */
+@keyframes modalPop{
+
+  from{
+
+    transform: scale(0.8);
+
+    opacity: 0;
+
+  }
+
+  to{
+
+    transform: scale(1);
+
+    opacity: 1;
+
+  }
+
+}
+
+/* LIGHT MODE */
+.light-mode .custom-modal{
+
+  background: white;
+
+}
+
+.light-mode .custom-modal h2{
+
+  color: black;
+
+}
+
+.light-mode .custom-modal p{
+
+  color: #333;
+
+}
+
+/* EDIT MODAL INPUT */
+#editTaskInput{
+
+  width: 100%;
+
+  margin: 20px 0;
+
+  padding: 14px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  outline: none;
+
+  font-size: 16px;
+
+}
+
+/* QUOTE SECTION */
+.quote-section{
+
+  text-align: center;
+
+}
+
+#quoteBox{
+
+  margin-top: 15px;
+
+  padding: 20px;
+
+  border-radius: 16px;
+
+  background: rgba(255,255,255,0.08);
+
+  color: white;
+
+  font-size: 18px;
+
+  line-height: 1.6;
+
+  font-style: italic;
+
+}
+
+.light-mode #quoteBox{
+
+  background: rgba(255,255,255,0.7);
+
+  color: black;
+
 }

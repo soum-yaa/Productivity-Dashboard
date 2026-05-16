@@ -33,7 +33,24 @@ const totalTasks = document.getElementById("totalTasks");
 const completedTasks = document.getElementById("completedTasks");
 const pendingTasks = document.getElementById("pendingTasks");
 
-const clearAllBtn =document.getElementById("clearAllBtn");
+const clearAllBtn = document.getElementById("clearAllBtn");
+
+const toast = document.getElementById("toast");
+
+const progressBar = document.getElementById("progressBar");
+
+const modalOverlay =document.getElementById("modalOverlay");
+const modalTitle =document.getElementById("modalTitle");
+const modalMessage =document.getElementById("modalMessage");
+const cancelModalBtn =document.getElementById("cancelModalBtn");
+const confirmModalBtn =document.getElementById("confirmModalBtn");
+
+const editModalOverlay =document.getElementById("editModalOverlay");
+const editTaskInput =document.getElementById("editTaskInput");
+const cancelEditBtn =document.getElementById("cancelEditBtn");
+const saveEditBtn =document.getElementById("saveEditBtn");
+
+const quoteBox =document.getElementById("quoteBox");
 
 // TIMER VARIABLES
 let timeLeft = 1500;
@@ -41,6 +58,54 @@ let timerInterval;
 
 // DRAG VARIABLE
 let draggedTask = null;
+let currentEditingTask = null;
+
+// TOAST FUNCTION
+function showToast(message, type){
+
+  toast.innerText = message;
+
+  toast.classList.remove(
+    "success",
+    "error",
+    "warning"
+  );
+
+  toast.classList.add(type);
+
+  toast.classList.add("show");
+
+  setTimeout(function(){
+
+    toast.classList.remove("show");
+
+  }, 2500);
+
+}
+
+function showModal(title, message, callback){
+
+  modalTitle.innerText = title;
+
+  modalMessage.innerText = message;
+
+  modalOverlay.classList.add("show");
+
+  confirmModalBtn.onclick = function(){
+
+    callback();
+
+    modalOverlay.classList.remove("show");
+
+  };
+
+  cancelModalBtn.onclick = function(){
+
+    modalOverlay.classList.remove("show");
+
+  };
+
+}
 
 // CREATE TASK FUNCTION
 function createTask(taskObj){
@@ -80,18 +145,26 @@ function createTask(taskObj){
 
       const allTasks = [...taskList.children];
 
-      const draggedIndex = allTasks.indexOf(draggedTask);
+      const draggedIndex =
+        allTasks.indexOf(draggedTask);
 
-      const targetIndex = allTasks.indexOf(li);
+      const targetIndex =
+        allTasks.indexOf(li);
 
       if(draggedIndex < targetIndex){
 
-        taskList.insertBefore(draggedTask, li.nextSibling);
+        taskList.insertBefore(
+          draggedTask,
+          li.nextSibling
+        );
 
       }
       else{
 
-        taskList.insertBefore(draggedTask, li);
+        taskList.insertBefore(
+          draggedTask,
+          li
+        );
 
       }
 
@@ -100,16 +173,28 @@ function createTask(taskObj){
   });
 
   // CHECKBOX
-  const checkBox = document.createElement("div");
+  const checkBox =
+    document.createElement("div");
 
   checkBox.classList.add("checkbox");
 
   // TASK TEXT
-  const span = document.createElement("span");
+  const span =
+    document.createElement("span");
 
   span.innerText = taskObj.text;
 
-  // RESTORE COMPLETED STATE
+   // EDIT TASK
+span.addEventListener(
+  "dblclick",
+  function(){
+
+    showEditModal(taskObj);
+
+  }
+);
+
+  // RESTORE COMPLETED
   if(taskObj.completed){
 
     checkBox.innerText = "✓";
@@ -121,23 +206,14 @@ function createTask(taskObj){
   // TOGGLE COMPLETED
   checkBox.addEventListener("click", function(){
 
-    taskObj.completed = !taskObj.completed;
-
-    span.classList.toggle("completed");
-
-    if(taskObj.completed){
-
-      checkBox.innerText = "✓";
-
-    }
-    else{
-
-      checkBox.innerText = "";
-
-    }
+    taskObj.completed =
+      !taskObj.completed;
 
     // SAVE
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    localStorage.setItem(
+      "tasks",
+      JSON.stringify(tasks)
+    );
 
     // RE-RENDER
     renderTasks(tasks);
@@ -149,33 +225,90 @@ function createTask(taskObj){
   li.appendChild(span);
 
   // DELETE BUTTON
-  const deleteBtn = document.createElement("button");
+  const deleteBtn =
+    document.createElement("button");
 
   deleteBtn.innerText = "Delete";
 
-  deleteBtn.addEventListener("click", function(event){
+  deleteBtn.addEventListener(
+    "click",
+    function(event){
 
-    event.stopPropagation();
+      event.stopPropagation();
 
-    // REMOVE FROM ARRAY
-    tasks = tasks.filter(function(task){
+      showToast(
+        "🗑️ Task Deleted",
+        "error"
+      );
 
-      return task !== taskObj;
+      // REMOVE TASK
+      tasks = tasks.filter(function(task){
 
-    });
+        return task !== taskObj;
 
-    // SAVE
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+      });
 
-    // RE-RENDER
-    renderTasks(tasks);
+      // SAVE
+      localStorage.setItem(
+        "tasks",
+        JSON.stringify(tasks)
+      );
 
-  });
+      // RE-RENDER
+      renderTasks(tasks);
+
+    }
+  );
 
   li.appendChild(deleteBtn);
 
-  // ADD TASK TO UI
+  // ADD TO UI
   taskList.appendChild(li);
+
+}
+
+// UPDATE TASK STATS
+function updateTaskStats(){
+
+  const total = tasks.length;
+
+  const completed =
+    tasks.filter(function(task){
+
+      return task.completed;
+
+    }).length;
+
+  const pending =
+    total - completed;
+
+  // UPDATE TEXT
+  totalTasks.innerText =
+    `Total Tasks: ${total}`;
+
+  completedTasks.innerText =
+    `Completed: ${completed}`;
+
+  pendingTasks.innerText =
+    `Pending: ${pending}`;
+
+  // CALCULATE %
+  let progress = 0;
+
+  if(total > 0){
+
+    progress = Math.round(
+      (completed / total) * 100
+    );
+
+  }
+
+  // UPDATE BAR
+  progressBar.style.width =
+    `${progress}%`;
+
+  progressBar.innerText =
+    `${progress}%`;
 
 }
 
@@ -194,39 +327,18 @@ function renderTasks(filteredTasks){
 
 }
 
-//task count update
-function updateTaskStats(){
-
-  const total = tasks.length;
-
-  const completed = tasks.filter(function(task){
-
-    return task.completed;
-
-  }).length;
-
-  const pending = total - completed;
-
-  totalTasks.innerText =
-    `Total Tasks: ${total}`;
-
-  completedTasks.innerText =
-    `Completed: ${completed}`;
-
-  pendingTasks.innerText =
-    `Pending: ${pending}`;
-
-}
-
-
 // ADD TASK
 addTaskBtn.addEventListener("click", function(){
 
-  const taskText = taskInput.value.trim();
+  const taskText =
+    taskInput.value.trim();
 
   if(taskText === ""){
 
-    alert("Please enter a task");
+    showToast(
+      "⚠️ Please enter a task",
+      "warning"
+    );
 
     return;
 
@@ -243,10 +355,19 @@ addTaskBtn.addEventListener("click", function(){
   tasks.push(taskObj);
 
   // SAVE
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem(
+    "tasks",
+    JSON.stringify(tasks)
+  );
 
   // RENDER
   renderTasks(tasks);
+
+  // TOAST
+  showToast(
+    "✅ Task Added",
+    "success"
+  );
 
   // CLEAR INPUT
   taskInput.value = "";
@@ -254,20 +375,26 @@ addTaskBtn.addEventListener("click", function(){
 });
 
 // ENTER KEY SUPPORT
-taskInput.addEventListener("keydown", function(event){
+taskInput.addEventListener(
+  "keydown",
+  function(event){
 
-  if(event.key === "Enter"){
+    if(event.key === "Enter"){
 
-    event.preventDefault();
+      event.preventDefault();
 
-    addTaskBtn.click();
+      addTaskBtn.click();
+
+    }
 
   }
-
-});
+);
 
 // LOAD SAVED TASKS
-const storedTasks = JSON.parse(localStorage.getItem("tasks"));
+const storedTasks =
+  JSON.parse(
+    localStorage.getItem("tasks")
+  );
 
 if(storedTasks){
 
@@ -278,7 +405,8 @@ if(storedTasks){
 }
 
 // SAVE NOTES
-const savedNotes = localStorage.getItem("notes");
+const savedNotes =
+  localStorage.getItem("notes");
 
 if(savedNotes){
 
@@ -287,11 +415,17 @@ if(savedNotes){
 }
 
 // AUTO SAVE NOTES
-notesInput.addEventListener("input", function(){
+notesInput.addEventListener(
+  "input",
+  function(){
 
-  localStorage.setItem("notes", notesInput.value);
+    localStorage.setItem(
+      "notes",
+      notesInput.value
+    );
 
-});
+  }
+);
 
 // CLOCK + GREETING
 function updateClock(){
@@ -309,38 +443,47 @@ function updateClock(){
 
   if(hours < 12){
 
-    greetingText = "Good Morning ☀️";
+    greetingText =
+      "Good Morning ☀️";
 
   }
   else if(hours < 18){
 
-    greetingText = "Good Afternoon 🌤️";
+    greetingText =
+      "Good Afternoon 🌤️";
 
   }
   else{
 
-    greetingText = "Good Evening 🌙";
+    greetingText =
+      "Good Evening 🌙";
 
   }
 
-  let formattedHours = hours % 12 || 12;
+  let formattedHours =
+    hours % 12 || 12;
 
-  const ampm = hours >= 12 ? "PM" : "AM";
+  const ampm =
+    hours >= 12 ? "PM" : "AM";
 
-  const today = now.toLocaleDateString("en-US", {
-
-    weekday: "long",
-    month: "long",
-    day: "numeric"
-
-  });
+  const today =
+    now.toLocaleDateString(
+      "en-US",
+      {
+        weekday: "long",
+        month: "long",
+        day: "numeric"
+      }
+    );
 
   clock.innerText =
     `${formattedHours}:${minutes} ${ampm}`;
 
-  greeting.innerText = greetingText;
+  greeting.innerText =
+    greetingText;
 
-  dateElement.innerText = today;
+  dateElement.innerText =
+    today;
 
 }
 
@@ -351,12 +494,16 @@ setInterval(updateClock, 1000);
 // TIMER DISPLAY
 function updateTimerDisplay(){
 
-  const minutes = Math.floor(timeLeft / 60);
+  const minutes =
+    Math.floor(timeLeft / 60);
 
-  const seconds = timeLeft % 60;
+  const seconds =
+    timeLeft % 60;
 
   timer.innerText =
-    `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    `${minutes}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
 
 }
 
@@ -402,72 +549,95 @@ updateTimerDisplay();
 // THEME TOGGLE
 themeBtn.addEventListener("click", function(){
 
-  document.body.classList.toggle("light-mode");
+  document.body.classList.toggle(
+    "light-mode"
+  );
 
-  if(document.body.classList.contains("light-mode")){
+  if(
+    document.body.classList.contains(
+      "light-mode"
+    )
+  ){
 
-    themeBtn.innerText = "☀️ Light Mode";
+    themeBtn.innerText =
+      "☀️ Light Mode";
 
-    localStorage.setItem("theme", "light");
+    localStorage.setItem(
+      "theme",
+      "light"
+    );
 
   }
   else{
 
-    themeBtn.innerText = "🌙 Dark Mode";
+    themeBtn.innerText =
+      "🌙 Dark Mode";
 
-    localStorage.setItem("theme", "dark");
+    localStorage.setItem(
+      "theme",
+      "dark"
+    );
 
   }
 
 });
 
 // RESTORE THEME
-const savedTheme = localStorage.getItem("theme");
+const savedTheme =
+  localStorage.getItem("theme");
 
 if(savedTheme === "light"){
 
-  document.body.classList.add("light-mode");
+  document.body.classList.add(
+    "light-mode"
+  );
 
-  themeBtn.innerText = "☀️ Light Mode";
+  themeBtn.innerText =
+    "☀️ Light Mode";
 
 }
 else{
 
-  themeBtn.innerText = "🌙 Dark Mode";
+  themeBtn.innerText =
+    "🌙 Dark Mode";
 
 }
 
 // WEATHER FUNCTION
 async function getWeather(){
 
-  const city = cityInput.value.trim();
+  const city =
+    cityInput.value.trim();
 
   if(city === ""){
 
-    alert("Please enter a city");
+    showToast(
+      "🌍 Please enter a city",
+      "warning"
+    );
 
     return;
 
   }
 
-  const apiKey = "YOUR_API_KEY";  // Add your OpenWeather API key here
+  const apiKey = "YOUR_API_KEY";
 
   const url =
     `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
   try{
 
-    const response = await fetch(url);
+    const response =
+      await fetch(url);
 
-    const data = await response.json();
+    const data =
+      await response.json();
 
     // INVALID CITY
     if(data.cod == 404){
 
       weatherResult.innerHTML =
         `<p>City not found</p>`;
-
-      cityInput.value = "";
 
       return;
 
@@ -476,34 +646,45 @@ async function getWeather(){
     // WEATHER EMOJI
     let weatherEmoji = "";
 
-    const weatherMain = data.weather[0].main;
+    const weatherMain =
+      data.weather[0].main;
 
     if(weatherMain === "Clear"){
 
       weatherEmoji = "☀️";
 
     }
-    else if(weatherMain === "Clouds"){
+    else if(
+      weatherMain === "Clouds"
+    ){
 
       weatherEmoji = "☁️";
 
     }
-    else if(weatherMain === "Rain"){
+    else if(
+      weatherMain === "Rain"
+    ){
 
       weatherEmoji = "🌧️";
 
     }
-    else if(weatherMain === "Thunderstorm"){
+    else if(
+      weatherMain === "Thunderstorm"
+    ){
 
       weatherEmoji = "⛈️";
 
     }
-    else if(weatherMain === "Snow"){
+    else if(
+      weatherMain === "Snow"
+    ){
 
       weatherEmoji = "❄️";
 
     }
-    else if(weatherMain === "Mist"){
+    else if(
+      weatherMain === "Mist"
+    ){
 
       weatherEmoji = "🌫️";
 
@@ -518,94 +699,237 @@ async function getWeather(){
     weatherResult.innerHTML = `
       <h3>${data.name}</h3>
 
-      <p>Temperature: ${data.main.temp}°C</p>
+      <p>
+        Temperature:
+        ${data.main.temp}°C
+      </p>
 
       <p>
         Weather:
-        ${weatherEmoji} ${data.weather[0].main}
+        ${weatherEmoji}
+        ${data.weather[0].main}
       </p>
 
-      <p>Humidity: ${data.main.humidity}%</p>
+      <p>
+        Humidity:
+        ${data.main.humidity}%
+      </p>
     `;
 
   }
   catch(error){
 
     weatherResult.innerHTML =
-      `<p>Please enter a valid city name</p>`;
+      `<p>Please enter a valid city</p>`;
 
   }
 
 }
 
 // WEATHER BUTTON
-weatherBtn.addEventListener("click", getWeather);
+weatherBtn.addEventListener(
+  "click",
+  getWeather
+);
 
-// ENTER KEY FOR WEATHER
-cityInput.addEventListener("keydown", function(event){
+// ENTER KEY WEATHER
+cityInput.addEventListener(
+  "keydown",
+  function(event){
 
-  if(event.key === "Enter"){
+    if(event.key === "Enter"){
 
-    getWeather();
+      getWeather();
+
+    }
 
   }
+);
 
-});
+// MOTIVATIONAL QUOTES ARRAY
+const quotes = [
 
-// FILTER BUTTONS
+  "Success doesn’t come from motivation. It comes from consistency.",
 
+  "Small progress every day adds up to big results.",
+
+  "Discipline is choosing between what you want now and what you want most.",
+
+  "Your future is created by what you do today.",
+
+  "Dream big. Start small. Act now.",
+
+  "Focus on becoming better, not perfect.",
+
+  "You don’t have to be extreme, just consistent.",
+
+  "Push yourself because nobody else will do it for you.",
+
+  "Hard work beats talent when talent doesn’t work hard.",
+
+  "The pain of discipline is better than the pain of regret.",
+
+  "Stay focused and never give up.",
+
+  "Every expert was once a beginner.",
+
+  "Consistency creates confidence.",
+
+  "Done is better than perfect.",
+
+  "Make yourself proud."
+
+];
+
+// RANDOM QUOTE FUNCTION
+function getQuote(){
+
+  const randomIndex = Math.floor(
+    Math.random() * quotes.length
+  );
+
+  quoteBox.innerHTML = `
+    "${quotes[randomIndex]}"
+  `;
+
+}
+// FILTERS
 allBtn.addEventListener("click", function(){
 
   renderTasks(tasks);
 
 });
 
-completedBtn.addEventListener("click", function(){
+completedBtn.addEventListener(
+  "click",
+  function(){
 
-  const completedTasks = tasks.filter(function(task){
+    const completed =
+      tasks.filter(function(task){
 
-    return task.completed;
+        return task.completed;
 
-  });
+      });
 
-  renderTasks(completedTasks);
+    renderTasks(completed);
 
-});
+  }
+);
 
-pendingBtn.addEventListener("click", function(){
+pendingBtn.addEventListener(
+  "click",
+  function(){
 
-  const pendingTasks = tasks.filter(function(task){
+    const pending =
+      tasks.filter(function(task){
 
-    return !task.completed;
+        return !task.completed;
 
-  });
+      });
 
-  renderTasks(pendingTasks);
+    renderTasks(pending);
 
-});
+  }
+);
 
-// CLEAR ALL TASKS
+// CLEAR ALL
+clearAllBtn.addEventListener(
+  "click",
+  function(){
 
-clearAllBtn.addEventListener("click", function(){
+    showModal(
+      "Delete All Tasks",
 
-  const confirmClear = confirm(
-    "Are you sure you want to delete all tasks?"
+      "Are you sure you want to delete all tasks?",
+
+      function(){
+
+        tasks = [];
+
+        localStorage.setItem(
+          "tasks",
+          JSON.stringify(tasks)
+        );
+
+        renderTasks(tasks);
+
+        showToast(
+          "🗑️ All Tasks Cleared",
+          "error"
+        );
+
+      }
+
+    );
+
+  }
+);
+
+// SHOW EDIT MODAL
+function showEditModal(taskObj){
+
+  currentEditingTask = taskObj;
+
+  editTaskInput.value =
+    taskObj.text;
+
+  editModalOverlay.classList.add(
+    "show"
   );
 
-  if(confirmClear){
+}
 
-    // EMPTY ARRAY
-    tasks = [];
+// SAVE EDIT
+saveEditBtn.addEventListener(
+  "click",
+  function(){
 
-    // CLEAR LOCAL STORAGE
+    const updatedText =
+      editTaskInput.value.trim();
+
+    if(updatedText === ""){
+
+      showToast(
+        "⚠️ Task cannot be empty",
+        "warning"
+      );
+
+      return;
+
+    }
+
+    currentEditingTask.text =
+      updatedText;
+
     localStorage.setItem(
       "tasks",
       JSON.stringify(tasks)
     );
 
-    // RE-RENDER
     renderTasks(tasks);
 
-  }
+    editModalOverlay.classList.remove(
+      "show"
+    );
 
-});
+    showToast(
+      "✏️ Task Updated",
+      "success"
+    );
+
+  }
+);
+
+// CANCEL EDIT
+cancelEditBtn.addEventListener(
+  "click",
+  function(){
+
+    editModalOverlay.classList.remove(
+      "show"
+    );
+
+  }
+);
+
+getQuote();

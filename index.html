@@ -27,15 +27,30 @@
 <p id="date"></p>
 
 </div>
+<section class="quote-section">
+
+  <h2>💡 Daily Motivation</h2>
+
+  <div id="quoteBox">
+
+    Loading quote...
+
+  </div>
+
+</section>
 
     <!-- TO DO SECTION -->
     <section class="todo-section">
       <h2>To-Do List</h2>
+      <p class="edit-info">
+  Double click a task to edit it
+</p>
 
       <div class="todo-input">
         <input type="text" id="taskInput" placeholder="Enter a task">
         <button id="addTaskBtn">Add</button>
       </div>
+     
       <div class="filters">
 
   <button id="allBtn">All</button>
@@ -48,11 +63,27 @@
 
 <div class="task-stats">
 
-  <p id="totalTasks">Total Tasks: 0</p>
+  <div class="stats-row">
 
-  <p id="completedTasks">Completed: 0</p>
+    <p id="totalTasks">
+      Total Tasks: 0
+    </p>
 
-  <p id="pendingTasks">Pending: 0</p>
+    <p id="completedTasks">
+      Completed: 0
+    </p>
+
+    <p id="pendingTasks">
+      Pending: 0
+    </p>
+
+  </div>
+
+  <div class="progress-container">
+
+    <div id="progressBar"></div>
+
+  </div>
 
 </div>
 
@@ -107,6 +138,63 @@
     </section>
 
   </div>
+<div id="toast"></div>
+
+<div class="modal-overlay" id="modalOverlay">
+
+  <div class="custom-modal">
+
+    <h2 id="modalTitle">
+      Confirm Action
+    </h2>
+
+    <p id="modalMessage">
+      Are you sure?
+    </p>
+
+    <div class="modal-buttons">
+
+      <button id="cancelModalBtn">
+        Cancel
+      </button>
+
+      <button id="confirmModalBtn">
+        Confirm
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="editModalOverlay">
+
+  <div class="custom-modal">
+
+    <h2>Edit Task</h2>
+
+    <input
+      type="text"
+      id="editTaskInput"
+      placeholder="Edit your task"
+    />
+
+    <div class="modal-buttons">
+
+      <button id="cancelEditBtn">
+        Cancel
+      </button>
+
+      <button id="saveEditBtn">
+        Save
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 
   <script src="script.js"></script>
 </body>
