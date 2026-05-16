@@ -431,13 +431,49 @@ textarea{
 }
 
 .filters{
+
   display: flex;
 
-  gap: 10px;
+  gap: 14px;
 
-  margin-top: 15px;
+  margin-top: 18px;
 
-  margin-bottom: 10px;
+  margin-bottom: 24px;
+
+  flex-wrap: wrap;
+
+}
+
+.filters button{
+
+  padding: 12px 22px;
+
+  border: none;
+
+  border-radius: 14px;
+
+  background: #6c63ff;
+
+  color: white;
+
+  font-size: 18px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+
+  min-width: 150px;
+
+}
+
+.filters button:hover{
+
+  transform: translateY(-2px);
+
+  opacity: 0.9;
+
 }
 
 .task-stats{
@@ -572,7 +608,10 @@ textarea{
 
   overflow: hidden;
 
-  margin-top: 12px;
+  margin-top: 8px;
+
+  margin-bottom: 28px;
+
 }
 
 #progressBar{

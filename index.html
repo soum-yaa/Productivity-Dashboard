@@ -39,43 +39,42 @@
 
 </section>
 
-    <!-- TO DO SECTION -->
-    <section class="todo-section">
-      <h2>To-Do List</h2>
-      <p class="edit-info">
-  Double click a task to edit it
-</p>
+<!-- TO DO SECTION -->
+<section class="todo-section">
 
-      <div class="todo-input">
-        <input type="text" id="taskInput" placeholder="Enter a task">
-        <button id="addTaskBtn">Add</button>
-      </div>
-     
-      <div class="filters">
+  <h2>To-Do List</h2>
 
-  <button id="allBtn">All</button>
+  <p class="edit-info">
+    Double click a task to edit it
+  </p>
 
-  <button id="completedBtn">Completed</button>
+  <div class="todo-input">
 
-  <button id="pendingBtn">Pending</button>
+    <input
+      type="text"
+      id="taskInput"
+      placeholder="Enter a task"
+    >
 
-</div>
+    <button id="addTaskBtn">
+      Add
+    </button>
 
-<div class="task-stats">
+  </div>
 
-  <div class="stats-row">
+  <div class="filters">
 
-    <p id="totalTasks">
-      Total Tasks: 0
-    </p>
+    <button id="allBtn">
+      All (0)
+    </button>
 
-    <p id="completedTasks">
-      Completed: 0
-    </p>
+    <button id="completedBtn">
+      Completed (0)
+    </button>
 
-    <p id="pendingTasks">
-      Pending: 0
-    </p>
+    <button id="pendingBtn">
+      Pending (0)
+    </button>
 
   </div>
 
@@ -85,14 +84,13 @@
 
   </div>
 
-</div>
+  <button id="clearAllBtn">
+    🗑️ Clear All Tasks
+  </button>
 
-<button id="clearAllBtn">
-  🗑️ Clear All Tasks
-</button>
+  <ul id="taskList"></ul>
 
-      <ul id="taskList"></ul>
-    </section>
+</section>
 
     <!-- NOTES SECTION -->
     <section class="notes-section">

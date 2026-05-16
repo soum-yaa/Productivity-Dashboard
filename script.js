@@ -29,10 +29,6 @@ const allBtn = document.getElementById("allBtn");
 const completedBtn = document.getElementById("completedBtn");
 const pendingBtn = document.getElementById("pendingBtn");
 
-const totalTasks = document.getElementById("totalTasks");
-const completedTasks = document.getElementById("completedTasks");
-const pendingTasks = document.getElementById("pendingTasks");
-
 const clearAllBtn = document.getElementById("clearAllBtn");
 
 const toast = document.getElementById("toast");
@@ -282,17 +278,17 @@ function updateTaskStats(){
   const pending =
     total - completed;
 
-  // UPDATE TEXT
-  totalTasks.innerText =
-    `Total Tasks: ${total}`;
+  // UPDATE FILTER BUTTON COUNTS
+  allBtn.innerText =
+    `All (${total})`;
 
-  completedTasks.innerText =
-    `Completed: ${completed}`;
+  completedBtn.innerText =
+    `Completed (${completed})`;
 
-  pendingTasks.innerText =
-    `Pending: ${pending}`;
+  pendingBtn.innerText =
+    `Pending (${pending})`;
 
-  // CALCULATE %
+  // CALCULATE PROGRESS %
   let progress = 0;
 
   if(total > 0){
@@ -303,7 +299,7 @@ function updateTaskStats(){
 
   }
 
-  // UPDATE BAR
+  // UPDATE PROGRESS BAR
   progressBar.style.width =
     `${progress}%`;
 
